@@ -1,7 +1,7 @@
 ## nomad coder react master class 시작
 
 
-
+- 2.2 스타일 컴포넌트가 많은 부분 겹칠 때 해결법
 
 
 ## Running React on Replit
