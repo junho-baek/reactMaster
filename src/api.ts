@@ -1,6 +1,17 @@
-// API 요청 함수를 분리하여 재사용성을 높입니다.
+const BASE_URL = `https://api.coinpaprika.com/v1`;
+
 export function fetchCoins() {
-  return fetch("https://api.coinpaprika.com/v1/coins").then((response) =>
+  return fetch(`${BASE_URL}/coins`).then((response) => response.json());
+}
+
+export function fetchCoinInfo(coinId: string) {
+  return fetch(`${BASE_URL}/coins/${coinId}`).then((response) =>
+    response.json()
+  );
+}
+
+export function fetchCoinTickers(coinId: string) {
+  return fetch(`${BASE_URL}/tickers/${coinId}`).then((response) =>
     response.json()
   );
 }
