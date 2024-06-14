@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { fetchCoins } from "../api";
 
 // 스타일 정의
 const Container = styled.div`
@@ -52,8 +53,8 @@ const Img = styled.img`
   margin-right: 10px;
 `;
 
-// CoinInterface 인터페이스 정의: 코인 데이터의 구조를 정의합니다.
-interface CoinInterface {
+// Coin 인터페이스 정의
+interface ICoin {
   id: string;
   name: string;
   symbol: string;
@@ -65,33 +66,19 @@ interface CoinInterface {
 
 // Coins 컴포넌트
 function Coins() {
-  // useState 훅으로 상태를 관리합니다. CoinInterface 배열과 로딩 상태를 관리합니다.
-  const [coins, setCoins] = useState<CoinInterface[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  // useEffect 훅: 컴포넌트가 마운트될 때 API로부터 데이터를 Fetch합니다.
-  useEffect(() => {
-    (async () => {
-      const response = await fetch("https://api.coinpaprika.com/v1/coins");
-      const json = await response.json();
-      // slice 메소드를 사용하여 처음 100개의 코인 데이터만 가져옵니다.
-      setCoins(json.slice(0, 100));
-      setLoading(false);
-    })();
-  }, []);
+  // React Query를 사용하여 데이터 Fetch 및 상태 관리
+  const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins);
 
   return (
     <Container>
       <Header>
         <Title>코인</Title>
       </Header>
-      {loading ? (
-        // 로딩 상태일 때 로더를 표시합니다.
+      {isLoading ? (
         <Loader>Loading...</Loader>
       ) : (
-        // 로딩이 완료되면 코인 목록을 표시합니다.
         <CoinsList>
-          {coins.map((coin) => (
+          {data?.slice(0, 100).map((coin) => (
             <Coin key={coin.id}>
               <Link
                 to={{

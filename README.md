@@ -2700,3 +2700,172 @@ feat: Add nested routes for chart and price tabs in Coin component
 - Added tab navigation for switching between chart and price
 - Used useRouteMatch to determine active tab
 - Styled Coin component with additional details and tabs
+
+
+## #5.9 React Query part One (13:08)
+
+### 주요 내용:
+- **React Query 사용:** 데이터를 효율적으로 Fetch하고 관리하기 위해 React Query를 사용합니다.
+- **API 요청 함수 분리:** API 요청 로직을 별도의 파일로 분리하여 재사용성을 높입니다.
+- **React Query 설정:** React Query의 QueryClient를 설정하고 이를 제공하여 애플리케이션에서 사용할 수 있게 합니다.
+
+### 코드 예시
+
+#### src/api.ts
+
+```typescript
+// API 요청 함수를 분리하여 재사용성을 높입니다.
+export function fetchCoins() {
+  return fetch("https://api.coinpaprika.com/v1/coins").then((response) =>
+    response.json()
+  );
+}
+```
+
+#### src/index.tsx
+
+```typescript
+import React from "react";
+import ReactDOM from "react-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ThemeProvider } from "styled-components";
+import App from "./App";
+import { theme } from "./theme";
+
+// React Query 클라이언트 설정
+const queryClient = new QueryClient();
+
+ReactDOM.render(
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <App />
+      </ThemeProvider>
+    </QueryClientProvider>
+  </React.StrictMode>,
+  document.getElementById("root")
+);
+```
+
+#### src/routes/Coins.tsx
+
+```typescript
+import { useQuery } from "react-query";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
+import { fetchCoins } from "../api";
+
+// 스타일 정의
+const Container = styled.div`
+  padding: 0px 20px;
+  max-width: 480px;
+  margin: 0 auto;
+`;
+
+const Header = styled.header`
+  height: 15vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const CoinsList = styled.ul``;
+
+const Coin = styled.li`
+  background-color: white;
+  color: ${(props) => props.theme.bgColor};
+  border-radius: 15px;
+  margin-bottom: 10px;
+  a {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    transition: color 0.2s ease-in;
+  }
+  &:hover {
+    a {
+      color: ${(props) => props.theme.accentColor};
+    }
+  }
+`;
+
+const Title = styled.h1`
+  font-size: 48px;
+  color: ${(props) => props.theme.accentColor};
+`;
+
+const Loader = styled.span`
+  text-align: center;
+  display: block;
+`;
+
+const Img = styled.img`
+  width: 35px;
+  height: 35px;
+  margin-right: 10px;
+`;
+
+// Coin 인터페이스 정의
+interface ICoin {
+  id: string;
+  name: string;
+  symbol: string;
+  rank: number;
+  is_new: boolean;
+  is_active: boolean;
+  type: string;
+}
+
+// Coins 컴포넌트
+function Coins() {
+  // React Query를 사용하여 데이터 Fetch 및 상태 관리
+  const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins);
+
+  return (
+    <Container>
+      <Header>
+        <Title>코인</Title>
+      </Header>
+      {isLoading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <CoinsList>
+          {data?.slice(0, 100).map((coin) => (
+            <Coin key={coin.id}>
+              <Link
+                to={{
+                  pathname: `/${coin.id}`,
+                  state: { name: coin.name },
+                }}
+              >
+                <Img
+                  src={`https://static.coinpaprika.com/coin/${coin.id}/logo.png`}
+                />
+                {coin.name} &rarr;
+              </Link>
+            </Coin>
+          ))}
+        </CoinsList>
+      )}
+    </Container>
+  );
+}
+export default Coins;
+```
+
+### 설명
+
+- **React Query 사용:** `useQuery` 훅을 사용하여 데이터를 Fetch하고, 로딩 상태와 데이터 상태를 관리합니다.
+- **API 요청 함수 분리:** API 요청 로직을 `src/api.ts` 파일로 분리하여 재사용성을 높이고 코드의 가독성을 향상시킵니다.
+- **QueryClient 설정:** React Query의 QueryClient를 설정하고 `QueryClientProvider`를 통해 애플리케이션 전역에서 사용할 수 있게 합니다.
+- **데이터 관리:** React Query를 통해 API로부터 데이터를 Fetch하고 상태를 관리하여 간결한 코드를 작성할 수 있습니다.
+- **스타일링:** styled-components를 사용하여 스타일을 정의하고 컴포넌트를 스타일링합니다.
+
+### 커밋 메시지
+
+feat: Integrate React Query for fetching and managing coin data
+
+- Implemented React Query for data fetching and management
+- Separated API request logic into a separate file for reusability
+- Configured QueryClient and provided it to the app
+- Styled Coins component and displayed coin data with React Query
