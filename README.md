@@ -526,4 +526,88 @@ feat: Add optional props and default values in Circle component
 - Used nullish coalescing operator (??) for borderColor prop
 ```
 
-이제 README.md, 주석, 커밋 메시지를 통해 강의 내용을 요약했습니다. 추가적으로 다른 내용이나 요청이 있으시면 언제든지 말씀해 주세요!
+
+## #3.4 State (06:17)
+
+### useState를 사용한 상태 관리
+
+#### 주요 내용:
+- useState를 사용하여 컴포넌트 내에서 상태를 관리합니다.
+- TypeScript와 함께 useState를 사용할 때 타입 추론 및 명시적인 타입 정의 방법을 학습합니다.
+- useState의 두 번째 인자인 상태 변경 함수의 타입을 명확히 설명합니다.
+
+### 코드 예시
+
+#### App.tsx
+
+```typescript
+import Circle from "./Circle";
+
+function App() {
+  return (
+    <div>
+      <Circle borderColor="yellow" bgColor="teal" />
+      <Circle bgColor="tomato" />
+    </div>
+  );
+}
+
+export default App;
+```
+
+#### Circle.tsx
+
+```typescript
+import { useState } from "react";
+import styled from "styled-components";
+
+// ContainerProps 인터페이스 정의: bgColor와 borderColor 속성을 포함합니다.
+interface ContainerProps {
+  bgColor: string;
+  borderColor: string;
+}
+
+// Container 컴포넌트: CircleProps를 사용하여 스타일링된 div입니다.
+const Container = styled.div<ContainerProps>`
+  width: 200px;
+  height: 200px;
+  background-color: ${(props) => props.bgColor};
+  border-radius: 100px;
+  border: 1px solid ${(props) => props.borderColor};
+`;
+
+// CircleProps 인터페이스 정의: bgColor는 필수, borderColor는 선택 속성입니다.
+interface CircleProps {
+  bgColor: string;
+  borderColor?: string;
+}
+
+// Circle 컴포넌트: bgColor와 선택적인 borderColor를 받아서 Container를 렌더링하고, useState를 사용하여 상태를 관리합니다.
+function Circle({ bgColor, borderColor }: CircleProps) {
+  // useState를 사용하여 상태(value)를 정의합니다. 초기 값은 빈 문자열입니다.
+  const [value, setValue] = useState<string>("");
+  return <Container bgColor={bgColor} borderColor={borderColor ?? bgColor} />;
+}
+
+export default Circle;
+```
+
+### 설명
+
+- **useState:** React 훅으로 함수형 컴포넌트에서 상태를 관리할 수 있습니다.
+- **타입 추론:** TypeScript는 useState의 초기 값을 기반으로 상태와 상태 변경 함수의 타입을 추론합니다.
+- **명시적 타입 정의:** `<string>`와 같이 제네릭을 사용하여 상태의 타입을 명시적으로 정의할 수 있습니다.
+- **상태 변경 함수:** useState의 두 번째 반환 값인 함수는 상태의 타입과 일치하는 값을 인자로 받아야 합니다. 다른 타입의 값을 반환하려면 타입을 명시적으로 표기해야 합니다.
+
+### 커밋 메시지
+
+```
+#3.4 State (06:17)
+
+feat: Add state management with useState in Circle component
+
+- Implemented useState for managing state in Circle component
+- Emphasized TypeScript type inference and explicit type definitions with useState
+- Highlighted the importance of matching types for state and state updater function
+```
+
