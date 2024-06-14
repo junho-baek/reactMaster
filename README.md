@@ -1641,3 +1641,216 @@ feat: Fetch coin data from API and display coin list
 - Implemented useEffect for API call on component mount
 - Added loading indicator and styled coin list
 ```
+
+## #5.3 Home part Two (09:47)
+
+### 주요 내용:
+- **API 데이터 Fetch:** 외부 API로부터 데이터를 가져오는 방법
+- **인터페이스 설정:** 데이터 구조를 정의하는 인터페이스 설정
+- **useState:** 상태 관리를 위한 훅, 명시적 타입 설정
+- **useEffect:** 컴포넌트의 생명주기 동안 특정 시점에 실행할 코드를 설정하는 훅
+- **async/await:** 비동기 작업을 동기식 코드처럼 작성하는 방법
+- **slice 메소드:** 배열의 일부분을 잘라내는 메소드
+- **로딩 상태:** 데이터 로딩 중 상태를 관리
+
+### 코드 예시
+
+src/routes/Coin.tsx
+
+```typescript
+import { useState } from "react";
+import { useLocation, useParams } from "react-router";
+import styled from "styled-components";
+
+// 스타일 정의
+const Title = styled.h1`
+  font-size: 48px;
+  color: ${(props) => props.theme.accentColor};
+`;
+
+const Loader = styled.span`
+  text-align: center;
+  display: block;
+`;
+
+const Container = styled.div`
+  padding: 0px 20px;
+  max-width: 480px;
+  margin: 0 auto;
+`;
+
+const Header = styled.header`
+  height: 15vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+// RouteParams 인터페이스 정의: URL 파라미터의 타입을 정의합니다.
+interface RouteParams {
+  coinId: string;
+}
+
+// RouteState 인터페이스 정의: 상태의 타입을 정의합니다.
+interface RouteState {
+  name: string;
+}
+
+// Coin 컴포넌트
+function Coin() {
+  const [loading, setLoading] = useState(true);
+  const { coinId } = useParams<RouteParams>();
+  const { state } = useLocation<RouteState>();
+  return (
+    <Container>
+      <Header>
+        <Title>{state?.name || "Loading..."}</Title>
+      </Header>
+      {loading ? <Loader>Loading...</Loader> : null}
+    </Container>
+  );
+}
+export default Coin;
+```
+
+src/routes/Coins.tsx
+
+```typescript
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
+
+// 스타일 정의
+const Container = styled.div`
+  padding: 0px 20px;
+  max-width: 480px;
+  margin: 0 auto;
+`;
+
+const Header = styled.header`
+  height: 15vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const CoinsList = styled.ul``;
+
+const Coin = styled.li`
+  background-color: white;
+  color: ${(props) => props.theme.bgColor};
+  border-radius: 15px;
+  margin-bottom: 10px;
+  a {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    transition: color 0.2s ease-in;
+  }
+  &:hover {
+    a {
+      color: ${(props) => props.theme.accentColor};
+    }
+  }
+`;
+
+const Title = styled.h1`
+  font-size: 48px;
+  color: ${(props) => props.theme.accentColor};
+`;
+
+const Loader = styled.span`
+  text-align: center;
+  display: block;
+`;
+
+const Img = styled.img`
+  width: 35px;
+  height: 35px;
+  margin-right: 10px;
+`;
+
+// CoinInterface 인터페이스 정의: 코인 데이터의 구조를 정의합니다.
+interface CoinInterface {
+  id: string;
+  name: string;
+  symbol: string;
+  rank: number;
+  is_new: boolean;
+  is_active: boolean;
+  type: string;
+}
+
+// Coins 컴포넌트
+function Coins() {
+  // useState 훅으로 상태를 관리합니다. CoinInterface 배열과 로딩 상태를 관리합니다.
+  const [coins, setCoins] = useState<CoinInterface[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // useEffect 훅: 컴포넌트가 마운트될 때 API로부터 데이터를 Fetch합니다.
+  useEffect(() => {
+    (async () => {
+      const response = await fetch("https://api.coinpaprika.com/v1/coins");
+      const json = await response.json();
+      // slice 메소드를 사용하여 처음 100개의 코인 데이터만 가져옵니다.
+      setCoins(json.slice(0, 100));
+      setLoading(false);
+    })();
+  }, []);
+
+  return (
+    <Container>
+      <Header>
+        <Title>코인</Title>
+      </Header>
+      {loading ? (
+        // 로딩 상태일 때 로더를 표시합니다.
+        <Loader>Loading...</Loader>
+      ) : (
+        // 로딩이 완료되면 코인 목록을 표시합니다.
+        <CoinsList>
+          {coins.map((coin) => (
+            <Coin key={coin.id}>
+              <Link
+                to={{
+                  pathname: `/${coin.id}`,
+                  state: { name: coin.name },
+                }}
+              >
+                <Img
+                  src={`https://static.coinpaprika.com/coin/${coin.id}/logo.png`}
+                />
+                {coin.name} &rarr;
+              </Link>
+            </Coin>
+          ))}
+        </CoinsList>
+      )}
+    </Container>
+  );
+}
+export default Coins;
+```
+
+### 설명
+
+- **API 데이터 Fetch:** `fetch` 함수를 사용하여 외부 API로부터 데이터를 가져옵니다.
+- **인터페이스 설정:** `CoinInterface` 인터페이스를 사용하여 코인 데이터의 구조를 정의합니다.
+- **useState:** 상태를 관리하기 위해 사용됩니다. 여기서는 코인 데이터와 로딩 상태를 관리합니다. 명시적 타입을 설정하여 상태의 타입을 명확히 합니다.
+- **useEffect:** 컴포넌트가 마운트될 때 한 번 실행되며, API 호출을 통해 데이터를 Fetch합니다.
+- **async/await:** 비동기 작업을 동기식 코드처럼 작성할 수 있게 합니다. `async` 함수 내에서 `await`를 사용하여 비동기 작업이 완료될 때까지 기다립니다.
+- **slice 메소드:** 배열의 일부분을 잘라내어 새로운 배열을 반환합니다. 여기서는 처음 100개의 코인 데이터만 가져옵니다.
+- **로딩 상태:** 데이터를 Fetch하는 동안 로딩 상태를 관리하여 사용자에게 로딩 중임을 표시합니다.
+- **이미지 링크:** 각 코인의 이미지를 `https://static.coinpaprika.com/coin/{coin.id}/logo.png`에서 가져옵니다.
+- **Link 컴포넌트:** `Link`는 `a` 태그와 달리 페이지를 새로고침하지 않고 클라이언트 사이드 라우팅을 통해 페이지를 전환합니다. 이는 애플리케이션의 퍼포먼스를 향상시킵니다. React Router 버전에 따라 사용하는 방법이 다를 수 있습니다.
+- **화면 전환 시 상태 전송:** Link 컴포넌트를 통해 다른 화면으로 전환할 때 상태(state)를 함께 보낼 수 있습니다. 홈 화면을 만들지 않으면 상태가 생성되지 않습니다. 
+
+### 커밋 메시지
+
+feat: Fetch coin data from API and display coin list with images
+
+- Fetched coin data from CoinPaprika API
+- Used useState to manage coin data and loading state
+- Implemented useEffect for API call on component mount
+- Added loading indicator and styled coin list
+- Displayed coin images and passed state to detail page using Link component
