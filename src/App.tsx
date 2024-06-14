@@ -1,40 +1,43 @@
 import React, { useState } from "react";
+import styled, { ThemeProvider } from "styled-components";
+import { lightTheme, darkTheme } from "./theme";
+
+// Wrapper 컴포넌트: 테마에 따라 배경 색상을 설정합니다.
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: ${(props) => props.theme.bgColor};
+  color: ${(props) => props.theme.textColor};
+`;
+
+// Button 컴포넌트: 테마에 따라 버튼 색상을 설정합니다.
+const Button = styled.button`
+  background-color: ${(props) => props.theme.btnColor};
+  color: ${(props) => props.theme.textColor};
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-top: 20px;
+`;
 
 function App() {
-  // 입력값을 상태로 관리합니다. 초기값은 빈 문자열입니다.
-  const [value, setValue] = useState("");
+  const [theme, setTheme] = useState(lightTheme);
 
-  // 입력값 변경 시 호출되는 함수입니다. 이벤트 객체에서 현재 타겟의 값을 추출합니다.
-  const onChange = (event: React.FormEvent<HTMLInputElement>) => {
-    //
-    //const value = event.currentTarget.value; 와 동일하다. 
-    const {
-      currentTarget: { value },
-    } = event;
-    console.log(value);
-    setValue(value);
-  };
-
-  // 폼 제출 시 호출되는 함수입니다. 기본 동작을 막고, 현재 입력값을 콘솔에 출력합니다.
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log("hello", value);
+  // 테마를 토글하는 함수입니다.
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === lightTheme ? darkTheme : lightTheme));
   };
 
   return (
-    <div>
-      {/* 폼 컴포넌트입니다. 제출 시 onSubmit 함수를 호출합니다. */}
-      <form onSubmit={onSubmit}>
-        {/* 입력 컴포넌트입니다. 입력값 변경 시 onChange 함수를 호출합니다. */}
-        <input
-          value={value}
-          onChange={onChange}
-          type="text"
-          placeholder="username"
-        />
-        <button>Log in</button>
-      </form>
-    </div>
+    <ThemeProvider theme={theme}>
+      <Wrapper>
+        <h1>Theme Toggle Example</h1>
+        <Button onClick={toggleTheme}>Toggle Theme</Button>
+      </Wrapper>
+    </ThemeProvider>
   );
 }
 
