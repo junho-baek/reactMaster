@@ -871,3 +871,231 @@ feat: Add theme toggle functionality with TypeScript and styled-components
 - Implemented theme toggle functionality in App component
 ```
 
+# #3 Recap
+
+## #3.1 DefinitelyTyped (09:51)
+- **TypeScript와 DefinitelyTyped:** TypeScript와 DefinitelyTyped를 사용하여 타입 정의를 추가합니다.
+- **타입 설정:** `@types/styled-components`를 설치하고 설정하여 styled-components와 TypeScript를 함께 사용합니다.
+- **CRA와 Vite 비교:** CRA와 Vite의 차이점과 각 환경에서 TypeScript 설정 시 유의할 점을 학습합니다.
+
+## #3.2 Typing the Props (12:19)
+- **Props 타입 정의:** TypeScript의 인터페이스를 사용하여 props의 타입을 정의합니다.
+- **기본값 설정:** 컴포넌트의 props에 기본값을 설정하는 방법을 학습합니다.
+
+## #3.3 Optional Props (09:48)
+- **옵셔널 속성:** 인터페이스에서 옵셔널 속성을 정의하는 방법을 학습합니다.
+- **디폴트값:** props에 기본값을 설정하는 문법을 이해합니다.
+- **nullish 병합 연산자 (`??`):** 값이 null 또는 undefined일 때 대체값을 설정하는 방법을 배웁니다.
+
+## #3.4 State (06:17)
+- **useState 사용:** useState를 사용하여 컴포넌트 내에서 상태를 관리합니다.
+- **타입 추론 및 명시적 타입 정의:** TypeScript와 함께 useState를 사용할 때 타입 추론 및 명시적인 타입 정의 방법을 학습합니다.
+- **상태 변경 함수 타입:** useState의 두 번째 반환 값인 상태 변경 함수의 타입을 명확히 설명합니다.
+
+## #3.5 Forms (09:02)
+- **폼 입력값 관리:** 폼의 입력값을 state로 관리하는 방법을 학습합니다.
+- **any 타입 피하기:** `any` 타입을 피해야 하는 이유와 대안을 배웁니다.
+- **이벤트 처리:** 입력 이벤트와 폼 제출 이벤트를 처리하는 방법을 학습합니다.
+- **구조 분해 할당:** ES6 구조 분해 할당 문법과 그 필요성을 이해합니다.
+
+## #3.6 Themes (08:42)
+- **타입 스타일드 컴포넌트 설치:** TypeScript와 styled-components를 함께 사용하기 위해 `@types/styled-components` 패키지를 설치합니다.
+- **테마 인터페이스 정의:** `styled.d.ts` 파일에서 테마 객체의 타입을 정의합니다.
+- **테마 설정:** `theme.ts` 파일에서 다크 모드와 라이트 모드 테마를 정의합니다.
+- **테마 토글 기능:** 상태와 버튼을 사용하여 다크 모드와 라이트 모드를 전환하는 기능을 구현합니다.
+
+## SyntheticEvent (합성 이벤트)
+- **합성 이벤트:** 모든 브라우저에서 이벤트를 동일하게 처리하기 위한 이벤트 래퍼 SyntheticEvent 객체를 전달받습니다.
+- **이벤트 종류:** Keyboard Events (onKeyDown, onKeyPress, onKeyUp), Focus Events (onFocus, onBlur), Form Events (onChange, onInput, onInvalid, onReset, onSubmit), Generic Events (onError, onLoad) 등 다양한 이벤트를 다룹니다.
+
+[React SyntheticEvent 공식 문서](https://reactjs.org/docs/events.html)
+
+
+#5 CRYPTO TRACKER
+
+## #5.0 Setup (09:54)
+
+### 주요 내용:
+- React Router 설치: `npm i react-router-dom@5.3.0`
+- React Query 사용 이유: 데이터 문제를 해결하기 위해
+- 프로젝트 설계: 두 개의 스크린 - 모든 코인 목록(홈) / 각각의 코인 디테일 화면
+
+### 라우터의 역할:
+- **BrowserRouter:** 앱의 라우팅을 설정하는 컨테이너 컴포넌트
+- **Switch:** 첫 번째로 매칭되는 라우트를 렌더링
+- **Route:** URL 경로와 일치하는 컴포넌트를 렌더링
+
+### useParams 설명:
+- **useParams:** URL의 동적 파라미터를 추출하는 훅으로, 특정 경로의 파라미터를 가져오는 데 사용됩니다.
+
+### 코드 예시
+
+#### package.json
+
+```json
+{
+  "name": "react-masterclass",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.11.1",
+    "@types/react": "^17.0.30",
+    "@types/react-dom": "^17.0.9",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-query": "^3.27.0",
+    "react-router-dom": "^5.3.0",
+    "react-scripts": "4.0.3",
+    "styled-components": "^5.3.1",
+    "styled-reset": "^4.3.4",
+    "typescript": "^4.4.4",
+    "web-vitals": "^1.1.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/react-query": "^1.2.9",
+    "@types/react-router-dom": "^5.3.1",
+    "@types/styled-components": "^5.1.15"
+  }
+}
+```
+
+#### src/App.tsx
+
+```typescript
+import Router from "./Router";
+
+// App 컴포넌트: 라우터 컴포넌트를 렌더링합니다.
+function App() {
+  return <Router />;
+}
+
+export default App;
+```
+
+#### src/Router.tsx
+
+```typescript
+import { BrowserRouter, Switch, Route } from "react-router-dom";
+import Coin from "./routes/Coin";
+import Coins from "./routes/Coins";
+
+// Router 컴포넌트: 앱의 라우팅을 설정합니다.
+function Router() {
+  return (
+    <BrowserRouter>
+      <Switch>
+        {/* URL이 /:coinId와 일치할 때 Coin 컴포넌트를 렌더링 */}
+        <Route path="/:coinId">
+          <Coin />
+        </Route>
+        {/* 기본 경로(/)와 일치할 때 Coins 컴포넌트를 렌더링 */}
+        <Route path="/">
+          <Coins />
+        </Route>
+      </Switch>
+    </BrowserRouter>
+  );
+}
+export default Router;
+```
+
+#### src/index.tsx
+
+```typescript
+import React from "react";
+import ReactDOM from "react-dom";
+import { ThemeProvider } from "styled-components";
+import App from "./App";
+import { theme } from "./theme";
+
+// index.tsx: 애플리케이션의 루트 컴포넌트를 렌더링합니다.
+ReactDOM.render(
+  <React.StrictMode>
+    <ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider>
+  </React.StrictMode>,
+  document.getElementById("root")
+);
+```
+
+#### src/routes/Coin.tsx
+
+```typescript
+import { useParams } from "react-router";
+
+// RouteParams 인터페이스: URL 파라미터 타입 정의
+interface RouteParams {
+  coinId: string;
+}
+
+// Coin 컴포넌트: URL 파라미터에서 coinId를 추출하고 렌더링합니다.
+function Coin() {
+  const { coinId } = useParams<RouteParams>();
+  return <h1>Coin: {coinId}</h1>;
+}
+export default Coin;
+```
+
+#### src/routes/Coins.tsx
+
+```typescript
+// Coins 컴포넌트: 모든 코인을 보여주는 컴포넌트입니다.
+function Coins() {
+  return <h1>Coins</h1>;
+}
+export default Coins;
+```
+
+#### src/theme.ts
+
+```typescript
+import { DefaultTheme } from "styled-components";
+
+// 테마 정의: 기본 테마 설정
+export const theme: DefaultTheme = {
+  bgColor: "white",
+  textColor: "black",
+  btnColor: "tomato",
+};
+```
+
+### 커밋 메시지
+
+```
+#5.0 Setup (09:54)
+
+feat: Setup initial project structure for CRYPTO TRACKER
+
+- Installed React Router and React Query
+- Added basic routing for home and coin detail screens
+- Implemented theme setup with styled-components
+```
