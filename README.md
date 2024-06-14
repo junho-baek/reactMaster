@@ -2126,3 +2126,577 @@ feat: Add data types for coin info and price data
 - Used useState with explicit types for managing API data
 - Implemented useEffect for fetching coin info and price data
 - Added resources for JSON to TypeScript type conversion and VSCode shortcuts
+## #5.7 Nested Routes part One (12:19)
+
+### 주요 내용:
+- **중첩된 라우트:** 특정 경로 내에서 더 세부적인 경로로 라우팅하는 방법
+- **추가된 스타일 및 컴포넌트:** Chart 및 Price 컴포넌트와 함께 추가된 스타일링
+
+### 코드 예시
+
+src/App.tsx
+
+```typescript
+import { createGlobalStyle } from "styled-components";
+import Router from "./Router";
+
+// 글로벌 스타일 정의
+const GlobalStyle = createGlobalStyle`
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, menu, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+main, menu, nav, section {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+article, aside, details, figcaption, figure,
+footer, header, hgroup, main, menu, nav, section {
+  display: block;
+}
+*[hidden] {
+    display: none;
+}
+body {
+  line-height: 1;
+}
+menu, ol, ul {
+  list-style: none;
+}
+blockquote, q {
+  quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  font-weight: 300;
+  font-family: 'Source Sans Pro', sans-serif;
+  background-color:${(props) => props.theme.bgColor};
+  color:${(props) => props.theme.textColor};
+  line-height: 1.2;
+}
+a {
+  text-decoration:none;
+  color:inherit;
+}
+`;
+
+// App 컴포넌트
+function App() {
+  return (
+    <>
+      <GlobalStyle />
+      <Router />
+    </>
+  );
+}
+
+export default App;
+```
+
+src/routes/Chart.tsx
+
+```typescript
+function Chart() {
+  return <h1>Chart</h1>;
+}
+
+export default Chart;
+```
+
+src/routes/Coin.tsx
+
+```typescript
+import { useEffect, useState } from "react";
+import { Switch, Route, useLocation, useParams } from "react-router";
+import styled from "styled-components";
+import Chart from "./Chart";
+import Price from "./Price";
+
+// 스타일 정의
+const Title = styled.h1`
+  font-size: 48px;
+  color: ${(props) => props.theme.accentColor};
+`;
+
+const Loader = styled.span`
+  text-align: center;
+  display: block;
+`;
+
+const Container = styled.div`
+  padding: 0px 20px;
+  max-width: 480px;
+  margin: 0 auto;
+`;
+
+const Header = styled.header`
+  height: 15vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Overview = styled.div`
+  display: flex;
+  justify-content: space-between;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px 20px;
+  border-radius: 10px;
+`;
+
+const OverviewItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  span:first-child {
+    font-size: 10px;
+    font-weight: 400;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+`;
+
+const Description = styled.p`
+  margin: 20px 0px;
+`;
+
+// RouteParams 인터페이스 정의: URL 파라미터의 타입을 정의합니다.
+interface RouteParams {
+  coinId: string;
+}
+
+// RouteState 인터페이스 정의: 상태의 타입을 정의합니다.
+interface RouteState {
+  name: string;
+}
+
+// InfoData 인터페이스 정의: 코인 정보 데이터의 타입을 정의합니다.
+interface InfoData {
+  id: string;
+  name: string;
+  symbol: string;
+  rank: number;
+  is_new: boolean;
+  is_active: boolean;
+  type: string;
+  description: string;
+  message: string;
+  open_source: boolean;
+  started_at: string;
+  development_status: string;
+  hardware_wallet: boolean;
+  proof_type: string;
+  org_structure: string;
+  hash_algorithm: string;
+  first_data_at: string;
+  last_data_at: string;
+}
+
+// PriceData 인터페이스 정의: 코인 가격 정보 데이터의 타입을 정의합니다.
+interface PriceData {
+  id: string;
+  name: string;
+  symbol: string;
+  rank: number;
+  circulating_supply: number;
+  total_supply: number;
+  max_supply: number;
+  beta_value: number;
+  first_data_at: string;
+  last_updated: string;
+  quotes: {
+    USD: {
+      ath_date: string;
+      ath_price: number;
+      market_cap: number;
+      market_cap_change_24h: number;
+      percent_change_1h: number;
+      percent_change_1y: number;
+      percent_change_6h: number;
+      percent_change_7d: number;
+      percent_change_12h: number;
+      percent_change_15m: number;
+      percent_change_24h: number;
+      percent_change_30d: number;
+      percent_change_30m: number;
+      percent_from_price_ath: number;
+      price: number;
+      volume_24h: number;
+      volume_24h_change_24h: number;
+    };
+  };
+}
+
+// Coin 컴포넌트
+function Coin() {
+  const [loading, setLoading] = useState(true);
+  const { coinId } = useParams<RouteParams>();
+  const { state } = useLocation<RouteState>();
+  const [info, setInfo] = useState<InfoData>();
+  const [priceInfo, setPriceInfo] = useState<PriceData>();
+
+  // useEffect 훅: 컴포넌트가 마운트될 때 API로부터 데이터를 Fetch합니다.
+  useEffect(() => {
+    (async () => {
+      const infoData = await (
+        await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
+      ).json();
+      const priceData = await (
+        await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
+      ).json();
+      setInfo(infoData);
+      setPriceInfo(priceData);
+      setLoading(false);
+    })();
+  }, [coinId]);
+
+  return (
+    <Container>
+      <Header>
+        <Title>
+          {state?.name ? state.name : loading ? "Loading..." : info?.name}
+        </Title>
+      </Header>
+      {loading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <>
+          <Overview>
+            <OverviewItem>
+              <span>Rank:</span>
+              <span>{info?.rank}</span>
+            </OverviewItem>
+            <OverviewItem>
+              <span>Symbol:</span>
+              <span>${info?.symbol}</span>
+            </OverviewItem>
+            <OverviewItem>
+              <span>Open Source:</span>
+              <span>{info?.open_source ? "Yes" : "No"}</span>
+            </OverviewItem>
+          </Overview>
+          <Description>{info?.description}</Description>
+          <Overview>
+            <OverviewItem>
+              <span>Total Suply:</span>
+              <span>{priceInfo?.total_supply}</span>
+            </OverviewItem>
+            <OverviewItem>
+              <span>Max Supply:</span>
+              <span>{priceInfo?.max_supply}</span>
+            </OverviewItem>
+          </Overview>
+          <Switch>
+            <Route path={`/${coinId}/price`}>
+              <Price />
+            </Route>
+            <Route path={`/${coinId}/chart`}>
+              <Chart />
+            </Route>
+          </Switch>
+        </>
+      )}
+    </Container>
+  );
+}
+export default Coin;
+```
+
+src/routes/Price.tsx
+
+```typescript
+function Price() {
+  return <h1>Price</h1>;
+}
+
+export default Price;
+```
+
+### 설명
+
+- **중첩된 라우트:** 특정 경로 내에서 더 세부적인 경로로 라우팅을 구현합니다. 여기서는 `/price`와 `/chart` 경로를 사용하여 가격 정보와 차트 정보를 보여줍니다.
+- **추가된 스타일 및 컴포넌트:** Chart 및 Price 컴포넌트가 추가되었으며, 새로운 스타일이 적용되었습니다.
+- **데이터 Fetch 및 상태 관리:** `useEffect`를 사용하여 컴포넌트가 마운트될 때 API로부터 데이터를 Fetch하고, `useState`를 사용하여 상태를 관리합니다.
+- **조건부 렌더링:** 데이터가 로딩 중일 때 로더를 표시하고, 로딩이 완료되면 데이터를 표시합니다.
+
+### 커밋 메시지
+
+
+## #5.8 Nested Routes part Two (08:42)
+
+### 주요 내용:
+- **중첩된 라우트:** 특정 경로 내에서 더 세부적인 경로로 라우팅하는 방법
+- **탭을 이용한 라우팅:** 가격 정보와 차트 정보를 탭으로 전환하며 보여주는 방법
+
+### 코드 예시
+
+src/routes/Coin.tsx
+
+```typescript
+import { useEffect, useState } from "react";
+import {
+  Switch,
+  Route,
+  useLocation,
+  useParams,
+  useRouteMatch,
+} from "react-router-dom";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
+import Chart from "./Chart";
+import Price from "./Price";
+
+// 스타일 정의
+const Title = styled.h1`
+  font-size: 48px;
+  color: ${(props) => props.theme.accentColor};
+`;
+
+const Loader = styled.span`
+  text-align: center;
+  display: block;
+`;
+
+const Container = styled.div`
+  padding: 0px 20px;
+  max-width: 480px;
+  margin: 0 auto;
+`;
+
+const Header = styled.header`
+  height: 15vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Overview = styled.div`
+  display: flex;
+  justify-content: space-between;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px 20px;
+  border-radius: 10px;
+`;
+const OverviewItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  span:first-child {
+    font-size: 10px;
+    font-weight: 400;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+`;
+const Description = styled.p`
+  margin: 20px 0px;
+`;
+
+const Tabs = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  margin: 25px 0px;
+  gap: 10px;
+`;
+
+const Tab = styled.span<{ isActive: boolean }>`
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 400;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 7px 0px;
+  border-radius: 10px;
+  color: ${(props) =>
+    props.isActive ? props.theme.accentColor : props.theme.textColor};
+  a {
+    display: block;
+  }
+`;
+
+interface RouteParams {
+  coinId: string;
+}
+interface RouteState {
+  name: string;
+}
+interface InfoData {
+  id: string;
+  name: string;
+  symbol: string;
+  rank: number;
+  is_new: boolean;
+  is_active: boolean;
+  type: string;
+  description: string;
+  message: string;
+  open_source: boolean;
+  started_at: string;
+  development_status: string;
+  hardware_wallet: boolean;
+  proof_type: string;
+  org_structure: string;
+  hash_algorithm: string;
+  first_data_at: string;
+  last_data_at: string;
+}
+interface PriceData {
+  id: string;
+  name: string;
+  symbol: string;
+  rank: number;
+  circulating_supply: number;
+  total_supply: number;
+  max_supply: number;
+  beta_value: number;
+  first_data_at: string;
+  last_updated: string;
+  quotes: {
+    USD: {
+      ath_date: string;
+      ath_price: number;
+      market_cap: number;
+      market_cap_change_24h: number;
+      percent_change_1h: number;
+      percent_change_1y: number;
+      percent_change_6h: number;
+      percent_change_7d: number;
+      percent_change_12h: number;
+      percent_change_15m: number;
+      percent_change_24h: number;
+      percent_change_30d: number;
+      percent_change_30m: number;
+      percent_from_price_ath: number;
+      price: number;
+      volume_24h: number;
+      volume_24h_change_24h: number;
+    };
+  };
+}
+
+// Coin 컴포넌트
+function Coin() {
+  const [loading, setLoading] = useState(true);
+  const { coinId } = useParams<RouteParams>();
+  const { state } = useLocation<RouteState>();
+  const [info, setInfo] = useState<InfoData>();
+  const [priceInfo, setPriceInfo] = useState<PriceData>();
+  const priceMatch = useRouteMatch("/:coinId/price");
+  const chartMatch = useRouteMatch("/:coinId/chart");
+  useEffect(() => {
+    (async () => {
+      const infoData = await (
+        await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
+      ).json();
+      const priceData = await (
+        await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
+      ).json();
+      setInfo(infoData);
+      setPriceInfo(priceData);
+      setLoading(false);
+    })();
+  }, [coinId]);
+  return (
+    <Container>
+      <Header>
+        <Title>
+          {state?.name ? state.name : loading ? "Loading..." : info?.name}
+        </Title>
+      </Header>
+      {loading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <>
+          <Overview>
+            <OverviewItem>
+              <span>Rank:</span>
+              <span>{info?.rank}</span>
+            </OverviewItem>
+            <OverviewItem>
+              <span>Symbol:</span>
+              <span>${info?.symbol}</span>
+            </OverviewItem>
+            <OverviewItem>
+              <span>Open Source:</span>
+              <span>{info?.open_source ? "Yes" : "No"}</span>
+            </OverviewItem>
+          </Overview>
+          <Description>{info?.description}</Description>
+          <Overview>
+            <OverviewItem>
+              <span>Total Suply:</span>
+              <span>{priceInfo?.total_supply}</span>
+            </OverviewItem>
+            <OverviewItem>
+              <span>Max Supply:</span>
+              <span>{priceInfo?.max_supply}</span>
+            </OverviewItem>
+          </Overview>
+
+          <Tabs>
+            <Tab isActive={chartMatch !== null}>
+              <Link to={`/${coinId}/chart`}>Chart</Link>
+            </Tab>
+            <Tab isActive={priceMatch !== null}>
+              <Link to={`/${coinId}/price`}>Price</Link>
+            </Tab>
+          </Tabs>
+
+          <Switch>
+            <Route path={`/:coinId/price`}>
+              <Price />
+            </Route>
+            <Route path={`/:coinId/chart`}>
+              <Chart />
+            </Route>
+          </Switch>
+        </>
+      )}
+    </Container>
+  );
+}
+export default Coin;
+```
+
+### 설명
+
+- **중첩된 라우트:** 특정 경로 내에서 더 세부적인 경로로 라우팅을 구현합니다. 여기서는 `/price`와 `/chart` 경로를 사용하여 가격 정보와 차트 정보를 보여줍니다.
+- **탭을 이용한 라우팅:** 탭 컴포넌트를 사용하여 가격 정보와 차트 정보를 전환하며 보여줍니다.
+- **데이터 Fetch 및 상태 관리:** `useEffect`를 사용하여 컴포넌트가 마운트될 때 API로부터 데이터를 Fetch하고, `useState`를 사용하여 상태를 관리합니다.
+- **조건부 렌더링:** 데이터가 로딩 중일 때 로더를 표시하고, 로딩이 완료되면 데이터를 표시합니다.
+- **Link 컴포넌트 사용:** React Router의 `Link` 컴포넌트를 사용하여 페이지를 새로고침하지 않고 경로를 전환합니다.
+- **useRouteMatch:** 현재 URL과 일치하는 경로를 찾는 데 사용됩니다.
+
+### 커밋 메시지
+
+feat: Add nested routes for chart and price tabs in Coin component
+
+- Implemented nested routes for chart and price views
+- Added tab navigation for switching between chart and price
+- Used useRouteMatch to determine active tab
+- Styled Coin component with additional details and tabs

@@ -1,7 +1,7 @@
 import { createGlobalStyle } from "styled-components";
 import Router from "./Router";
 
-// GlobalStyle 컴포넌트: 글로벌 스타일을 정의합니다.
+// 글로벌 스타일 정의
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
 html, body, div, span, applet, object, iframe,
@@ -23,12 +23,10 @@ main, menu, nav, section {
   font: inherit;
   vertical-align: baseline;
 }
-/* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure,
 footer, header, hgroup, main, menu, nav, section {
   display: block;
 }
-/* HTML5 hidden-attribute fix for newer browsers */
 *[hidden] {
     display: none;
 }
@@ -54,9 +52,11 @@ table {
   box-sizing: border-box;
 }
 body {
+  font-weight: 300;
   font-family: 'Source Sans Pro', sans-serif;
   background-color:${(props) => props.theme.bgColor};
-  color:${(props) => props.theme.textColor}
+  color:${(props) => props.theme.textColor};
+  line-height: 1.2;
 }
 a {
   text-decoration:none;
@@ -64,7 +64,7 @@ a {
 }
 `;
 
-// App 컴포넌트: 글로벌 스타일과 라우터를 렌더링합니다.
+// App 컴포넌트
 function App() {
   return (
     <>
