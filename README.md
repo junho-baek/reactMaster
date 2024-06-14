@@ -3,9 +3,6 @@
 
 ### README.md
 
-
-# React with TypeScript
-
 ## #2.5 Pseudo Selectors part Two (04:49)
 
 ### Pseudo Selectors와 컴포넌트화
@@ -281,20 +278,150 @@ npm install --save-dev @types/styled-components
 ```
 
 
-## Running React on Replit
 
-[React](https://reactjs.org/) is a popular JavaScript library for building user interfaces.
+## #3.2 Typing the Props (12:19)
 
-[Vite](https://vitejs.dev/) is a blazing fast frontend build tool that includes features like Hot Module Reloading (HMR), optimized builds, and TypeScript support out of the box.
+### 인터페이스를 사용하여 Props 타입 정의하기
 
-Using the two in conjunction is one of the fastest ways to build a web app.
+#### 주요 내용:
+- TypeScript의 인터페이스를 사용하여 props의 타입을 정의하면 컴파일 전에 오류를 찾을 수 있습니다.
+- 객체지향 프로그래밍에서 인터페이스는 클래스와 같은 객체의 구조를 정의합니다.
+- 인터페이스를 사용하면 코드의 유지보수성과 가독성이 높아집니다.
+- 컴파일 타임에 타입 체크를 통해 오류를 사전에 방지할 수 있습니다.
 
-### Getting Started
-- Hit run
-- Edit [App.jsx](#src/App.jsx) and watch it live update!
+### 코드 예시
 
-By default, Replit runs the `dev` script, but you can configure it by changing the `run` field in the [configuration file](#.replit). Here are the vite docs for [serving production websites](https://vitejs.dev/guide/build.html)
+#### App.tsx
 
-### Typescript
+```typescript
+import Circle from "./Circle";
 
-Just rename any file from `.jsx` to `.tsx`. You can also try our [TypeScript Template](https://replit.com/@replit/React-TypeScript)
+function App() {
+  return (
+    <div>
+      <Circle bgColor="teal" />
+      <Circle bgColor="tomato" />
+    </div>
+  );
+}
+
+export default App;
+```
+
+#### Circle.tsx
+
+```typescript
+import styled from "styled-components";
+
+// CircleProps 인터페이스 정의: bgColor 속성을 string 타입으로 설정합니다.
+interface CircleProps {
+  bgColor: string;
+}
+
+// Container 컴포넌트: CircleProps를 사용하여 스타일링된 div입니다.
+const Container = styled.div<CircleProps>`
+  width: 200px;
+  height: 200px;
+  background-color: ${(props) => props.bgColor};
+  border-radius: 100px;
+`;
+
+// Circle 컴포넌트: bgColor props를 받아서 Container를 렌더링합니다.
+function Circle({ bgColor }: CircleProps) {
+  return <Container bgColor={bgColor} />;
+}
+
+export default Circle;
+```
+
+#### index.tsx
+
+```typescript
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./App";
+
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById("root")
+);
+```
+
+
+### 주석
+
+#### App.tsx
+
+```typescript
+import Circle from "./Circle";
+
+// App 컴포넌트: Circle 컴포넌트를 사용하여 배경색을 다르게 설정합니다.
+function App() {
+  return (
+    <div>
+      <Circle bgColor="teal" />
+      <Circle bgColor="tomato" />
+    </div>
+  );
+}
+
+export default App;
+```
+
+#### Circle.tsx
+
+```typescript
+import styled from "styled-components";
+
+// CircleProps 인터페이스 정의: bgColor 속성을 string 타입으로 설정합니다.
+interface CircleProps {
+  bgColor: string;
+}
+
+// Container 컴포넌트: CircleProps를 사용하여 스타일링된 div입니다.
+const Container = styled.div<CircleProps>`
+  width: 200px;
+  height: 200px;
+  background-color: ${(props) => props.bgColor};
+  border-radius: 100px;
+`;
+
+// Circle 컴포넌트: bgColor props를 받아서 Container를 렌더링합니다.
+function Circle({ bgColor }: CircleProps) {
+  return <Container bgColor={bgColor} />;
+}
+
+export default Circle;
+```
+
+#### index.tsx
+
+```typescript
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./App";
+
+// ReactDOM.render: React 애플리케이션을 'root' 엘리먼트에 렌더링합니다.
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById("root")
+);
+```
+
+### 커밋 메시지
+
+```
+#3.2 Typing the Props (12:19)
+
+feat: Add prop typing with TypeScript interfaces
+
+- Defined CircleProps interface for typing props
+- Styled Circle component using styled-components with props
+- Demonstrated usage of props with typed components in App
+- Highlighted the advantages of using TypeScript interfaces for prop typing
+```
+
