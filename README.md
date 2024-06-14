@@ -425,3 +425,105 @@ feat: Add prop typing with TypeScript interfaces
 - Highlighted the advantages of using TypeScript interfaces for prop typing
 ```
 
+
+## #3.3 Optional Props (09:48)
+
+### 옵셔널 속성 및 디폴트값 설정
+
+#### 주요 내용:
+- TypeScript의 인터페이스에서 옵셔널 속성을 정의하는 방법을 학습합니다.
+- 컴포넌트의 props에 기본값을 설정하는 문법을 이해합니다.
+- TypeScript의 `??` (nullish 병합 연산자)를 사용하여 값이 null 또는 undefined일 때 대체값을 설정하는 방법을 배웁니다.
+
+### 코드 예시
+
+#### App.tsx
+
+```typescript
+import Circle from "./Circle";
+
+function App() {
+  return (
+    <div>
+      <Circle borderColor="yellow" bgColor="teal" />
+      <Circle text="im here" bgColor="tomato" />
+    </div>
+  );
+}
+
+export default App;
+```
+
+#### Circle.tsx
+
+```typescript
+import styled from "styled-components";
+
+// ContainerProps 인터페이스 정의: bgColor와 borderColor 속성을 포함합니다.
+interface ContainerProps {
+  bgColor: string;
+  borderColor: string;
+}
+
+// Container 컴포넌트: CircleProps를 사용하여 스타일링된 div입니다.
+const Container = styled.div<ContainerProps>`
+  width: 200px;
+  height: 200px;
+  background-color: ${(props) => props.bgColor};
+  border-radius: 100px;
+  border: 1px solid ${(props) => props.borderColor};
+`;
+
+// CircleProps 인터페이스 정의: bgColor는 필수, borderColor와 text는 선택 속성입니다.
+interface CircleProps {
+  bgColor: string;
+  borderColor?: string;
+  text?: string;
+}
+
+// Circle 컴포넌트: bgColor와 선택적인 borderColor, text를 받아서 Container를 렌더링합니다.
+function Circle({ bgColor, borderColor, text = "default text" }: CircleProps) {
+  return (
+    <Container bgColor={bgColor} borderColor={borderColor ?? bgColor}>
+      {text}
+    </Container>
+  );
+}
+
+export default Circle;
+```
+
+#### index.tsx
+
+```typescript
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./App";
+
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById("root")
+);
+```
+
+### 설명
+
+- **옵셔널 속성:** 인터페이스에서 `borderColor?`와 `text?`로 옵셔널 속성을 정의하면 해당 속성이 제공되지 않을 때도 오류가 발생하지 않습니다.
+- **디폴트값 설정:** `Circle` 컴포넌트에서 `text` 속성에 기본값을 "default text"로 설정했습니다.
+- **nullish 병합 연산자 `??`:** `borderColor`가 null 또는 undefined일 경우 `bgColor`를 대신 사용합니다. `??` 연산자는 null 또는 undefined일 때만 대체값을 설정합니다.
+
+### 커밋 메시지
+
+```
+#3.3 Optional Props (09:48)
+
+feat: Add optional props and default values in Circle component
+
+- Defined optional props in CircleProps interface
+- Set default values for text prop in Circle component
+- Used nullish coalescing operator (??) for borderColor prop
+```
+
+이제 README.md, 주석, 커밋 메시지를 통해 강의 내용을 요약했습니다. 추가적으로 다른 내용이나 요청이 있으시면 언제든지 말씀해 주세요!
