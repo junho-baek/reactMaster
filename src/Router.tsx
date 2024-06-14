@@ -1,22 +1,20 @@
-import { BrowserRouter, Switch, Route } from "react-router-dom";
-import Coin from "./routes/Coin";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Coins from "./routes/Coins";
+import Coin from "./routes/Coin";
 
-// Router 컴포넌트: 앱의 라우팅을 설정합니다.
-function Router() {
+function AppRouter() {
   return (
-    <BrowserRouter>
+    <Router>
       <Switch>
-        {/* URL이 /:coinId와 일치할 때 Coin 컴포넌트를 렌더링 */}
         <Route path="/:coinId">
           <Coin />
         </Route>
-        {/* 기본 경로(/)와 일치할 때 Coins 컴포넌트를 렌더링 */}
         <Route path="/">
           <Coins />
         </Route>
       </Switch>
-    </BrowserRouter>
+    </Router>
   );
 }
-export default Router;
+
+export default AppRouter;
