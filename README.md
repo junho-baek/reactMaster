@@ -611,3 +611,133 @@ feat: Add state management with useState in Circle component
 - Highlighted the importance of matching types for state and state updater function
 ```
 
+
+## #3.5 Forms (09:02)
+
+### 폼 입력값을 상태로 관리하기
+
+#### 주요 내용:
+- 폼의 입력값을 state로 관리하는 방법을 학습합니다.
+- `any` 타입을 피해야 하는 이유와 대안을 배웁니다.
+- `currentTarget`의 의미와 이벤트에서 접근하는 방법을 이해합니다.
+- 클릭과 서브밋 이벤트 처리 방법을 학습합니다.
+- 리액트 폼 이벤트와 타입에 대해 설명합니다.
+
+### 코드 예시
+
+#### App.tsx
+
+```typescript
+import React, { useState } from "react";
+
+function App() {
+  // 입력값을 상태로 관리합니다. 초기값은 빈 문자열입니다.
+  const [value, setValue] = useState("");
+
+  // 입력값 변경 시 호출되는 함수입니다. 이벤트 객체에서 현재 타겟의 값을 추출합니다.
+  const onChange = (event: React.FormEvent<HTMLInputElement>) => {
+    const {
+      currentTarget: { value },
+    } = event;
+    setValue(value);
+  };
+
+  // 폼 제출 시 호출되는 함수입니다. 기본 동작을 막고, 현재 입력값을 콘솔에 출력합니다.
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    console.log("hello", value);
+  };
+
+  return (
+    <div>
+      {/* 폼 컴포넌트입니다. 제출 시 onSubmit 함수를 호출합니다. */}
+      <form onSubmit={onSubmit}>
+        {/* 입력 컴포넌트입니다. 입력값 변경 시 onChange 함수를 호출합니다. */}
+        <input
+          value={value}
+          onChange={onChange}
+          type="text"
+          placeholder="username"
+        />
+        <button>Log in</button>
+      </form>
+    </div>
+  );
+}
+
+export default App;
+```
+
+### 설명
+
+- **폼 입력값을 state로 관리:** 입력값을 state로 관리하여 React 컴포넌트의 상태와 동기화합니다.
+- **`any` 타입 피하기:** `any` 타입을 사용하면 TypeScript의 타입 체크 기능을 활용할 수 없으므로, 가능한 구체적인 타입을 사용합니다.
+- **`currentTarget`:** 이벤트가 발생한 요소를 나타내며, 여기서는 입력 필드의 값을 가져오는 데 사용됩니다.
+- **이벤트 처리:** 입력 이벤트와 폼 제출 이벤트를 처리하여 사용자의 입력을 상태로 반영하고, 폼 제출 시 추가 동작을 수행합니다.
+- **ES6 구조 분해 할당:** ES6 문법을 사용하여 이벤트 객체에서 필요한 값을 추출합니다. 이는 코드의 가독성을 높이고 유지보수를 용이하게 합니다.
+
+### 구조 분해 할당
+
+구조 분해 할당(Destructuring Assignment)은 객체나 배열의 속성을 쉽게 추출하여 변수에 할당하는 ES6 문법입니다. 이는 코드의 가독성을 높이고 반복되는 코드를 줄이는 데 유용합니다.
+
+#### 예시 코드
+
+1. **객체 구조 분해 할당:**
+
+```javascript
+const user = {
+  name: "John",
+  age: 30,
+  address: {
+    city: "New York",
+    zip: "10001"
+  }
+};
+
+// 기존 방식
+const name = user.name;
+const age = user.age;
+const city = user.address.city;
+
+// 구조 분해 할당 방식
+const { name, age, address: { city } } = user;
+
+console.log(name); // John
+console.log(age);  // 30
+console.log(city); // New York
+```
+
+2. **배열 구조 분해 할당:**
+
+```javascript
+const numbers = [1, 2, 3, 4, 5];
+
+// 기존 방식
+const first = numbers[0];
+const second = numbers[1];
+
+// 구조 분해 할당 방식
+const [first, second, , , fifth] = numbers;
+
+console.log(first);  // 1
+console.log(second); // 2
+console.log(fifth);  // 5
+```
+
+구조 분해 할당을 사용하면 복잡한 객체나 배열에서 필요한 값만 쉽게 추출할 수 있어 코드가 더 간결해집니다.
+
+### 커밋 메시지
+
+```
+#3.5 Forms (09:02)
+
+feat: Manage form input values with useState in App component
+
+- Implemented state management for form input values using useState
+- Handled input change and form submit events
+- Explained the use of TypeScript types in React form events
+- Highlighted the importance of avoiding `any` type
+- Added explanation and examples of destructuring assignment in JavaScript
+```
+
+
