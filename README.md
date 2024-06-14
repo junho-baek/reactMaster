@@ -1642,7 +1642,7 @@ feat: Fetch coin data from API and display coin list
 - Added loading indicator and styled coin list
 ```
 
-## #5.3 Home part Two (09:47)
+## #5.4 Route States (14:55)
 
 ### 주요 내용:
 - **API 데이터 Fetch:** 외부 API로부터 데이터를 가져오는 방법
