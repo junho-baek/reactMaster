@@ -2,8 +2,9 @@ import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoins } from "../api";
+// import { Helmet } from "react-helmet";
 
-// 스타일 정의
+
 const Container = styled.div`
   padding: 0px 20px;
   max-width: 480px;
@@ -53,7 +54,6 @@ const Img = styled.img`
   margin-right: 10px;
 `;
 
-// Coin 인터페이스 정의
 interface ICoin {
   id: string;
   name: string;
@@ -64,13 +64,13 @@ interface ICoin {
   type: string;
 }
 
-// Coins 컴포넌트
 function Coins() {
-  // React Query를 사용하여 데이터 Fetch 및 상태 관리
   const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins);
-
   return (
     <Container>
+      {/* <Helmet>
+        <title>코인</title>
+      </Helmet> */}
       <Header>
         <Title>코인</Title>
       </Header>
