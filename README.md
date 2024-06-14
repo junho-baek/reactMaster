@@ -1099,3 +1099,164 @@ feat: Setup initial project structure for CRYPTO TRACKER
 - Added basic routing for home and coin detail screens
 - Implemented theme setup with styled-components
 ```
+
+
+## #5.1 Styles (09:44)
+
+### 주요 내용:
+- **Reset CSS:** 브라우저 기본 스타일을 초기화하여 일관된 스타일을 적용할 수 있게 합니다.
+- **Global Styles:** `createGlobalStyle`을 사용하여 전체 문서에 공통 스타일을 적용합니다.
+- **Fragment:** 여러 요소를 그룹화하지만 DOM에 추가 요소를 만들지 않는 유령 컴포넌트입니다.
+- **폰트 사용:** `@import`를 사용하여 외부 폰트를 가져옵니다.
+- **Flat UI Color:** 색상 팔레트를 제공하는 사이트로, 다양한 색상 조합을 쉽게 찾을 수 있습니다. [Flat UI Colors](https://flatuicolors.com/palette/gb)
+
+### 코드 예시
+
+#### src/App.tsx
+
+```typescript
+import { createGlobalStyle } from "styled-components";
+import Router from "./Router";
+
+// GlobalStyle 컴포넌트: 글로벌 스타일을 정의합니다.
+const GlobalStyle = createGlobalStyle`
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, menu, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+main, menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, main, menu, nav, section {
+  display: block;
+}
+/* HTML5 hidden-attribute fix for newer browsers */
+*[hidden] {
+    display: none;
+}
+body {
+  line-height: 1;
+}
+menu, ol, ul {
+  list-style: none;
+}
+blockquote, q {
+  quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+  background-color:${(props) => props.theme.bgColor};
+  color:${(props) => props.theme.textColor}
+}
+a {
+  text-decoration:none;
+}
+`;
+
+// App 컴포넌트: 글로벌 스타일과 라우터를 렌더링합니다.
+function App() {
+  return (
+    <>
+      <GlobalStyle />
+      <Router />
+    </>
+  );
+}
+
+export default App;
+```
+
+#### src/routes/Coins.tsx
+
+```typescript
+import styled from "styled-components";
+
+// Title 컴포넌트: 테마에 따라 색상을 설정합니다.
+const Title = styled.h1`
+  color: ${(props) => props.theme.accentColor};
+`;
+
+// Coins 컴포넌트: 제목을 렌더링합니다.
+function Coins() {
+  return <Title>코인</Title>;
+}
+
+export default Coins;
+```
+
+#### src/styled.d.ts
+
+```typescript
+import "styled-components";
+
+// DefaultTheme 인터페이스: 테마 속성을 정의합니다.
+declare module "styled-components" {
+  export interface DefaultTheme {
+    textColor: string;
+    bgColor: string;
+    accentColor: string;
+  }
+}
+```
+
+#### src/theme.ts
+
+```typescript
+import { DefaultTheme } from "styled-components";
+
+// 테마 정의: 기본 테마 설정
+export const theme: DefaultTheme = {
+  bgColor: "#2f3640",
+  textColor: "#f5f6fa",
+  accentColor: "#4cd137",
+};
+```
+
+### 설명
+
+- **Reset CSS:** 다양한 브라우저에서 기본 스타일을 초기화하여 일관된 스타일을 적용합니다. 모든 요소의 기본 마진, 패딩 등을 제거합니다.
+- **Global Styles:** `createGlobalStyle`을 사용하여 전체 문서에 공통 스타일을 적용합니다. 여기서 폰트, 배경색, 텍스트 색상 등을 설정할 수 있습니다.
+- **Fragment:** 여러 요소를 그룹화하지만, DOM에 추가 요소를 만들지 않는 유령 컴포넌트입니다. 불필요한 요소를 피하기 위해 사용됩니다.
+- **폰트 사용:** `@import`를 사용하여 외부 폰트를 가져와 사용할 수 있습니다. 예시에서는 Google Fonts의 'Source Sans Pro' 폰트를 사용합니다.
+- **Flat UI Colors:** 색상 팔레트를 제공하는 사이트로, 다양한 색상 조합을 쉽게 찾을 수 있습니다. [Flat UI Colors](https://flatuicolors.com/palette/gb)
+
+### 커밋 메시지
+
+```
+#5.1 Styles (09:44)
+
+feat: Add global styles and theme setup for CRYPTO TRACKER
+
+- Implemented reset CSS using createGlobalStyle
+- Applied global styles to the entire document
+- Added theme colors and setup theme provider
+- Utilized Fragment to group elements without adding extra nodes to the DOM
+```
