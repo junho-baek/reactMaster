@@ -1260,9 +1260,7 @@ feat: Add global styles and theme setup for CRYPTO TRACKER
 - Added theme colors and setup theme provider
 - Utilized Fragment to group elements without adding extra nodes to the DOM
 ```
-### README.md
 
-#5 CRYPTO TRACKER
 
 ## #5.1 Styles (09:44)
 
@@ -1502,4 +1500,144 @@ feat: Style home screen and add coin list
 - Styled home screen components
 - Used map function to render coin list
 - Implemented Link component for client-side routing
+```
+
+
+## #5.3 Home part Two (09:47)
+
+### 주요 내용:
+- **API 데이터 Fetch:** 외부 API로부터 데이터를 가져오는 방법
+- **인터페이스 설정:** 데이터 구조를 정의하는 인터페이스 설정
+- **useState:** 상태 관리를 위한 훅, 명시적 타입 설정
+- **useEffect:** 컴포넌트의 생명주기 동안 특정 시점에 실행할 코드를 설정하는 훅
+- **async/await:** 비동기 작업을 동기식 코드처럼 작성하는 방법
+- **slice 메소드:** 배열의 일부분을 잘라내는 메소드
+- **로딩 상태:** 데이터 로딩 중 상태를 관리
+
+### 코드 예시
+
+#### src/routes/Coins.tsx
+
+```typescript
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
+
+// 스타일 정의
+const Container = styled.div`
+  padding: 0px 20px;
+  max-width: 480px;
+  margin: 0 auto;
+`;
+
+const Header = styled.header`
+  height: 15vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const CoinsList = styled.ul``;
+
+const Coin = styled.li`
+  background-color: white;
+  color: ${(props) => props.theme.bgColor};
+  border-radius: 15px;
+  margin-bottom: 10px;
+  a {
+    padding: 20px;
+    transition: color 0.2s ease-in;
+    display: block;
+  }
+  &:hover {
+    a {
+      color: ${(props) => props.theme.accentColor};
+    }
+  }
+`;
+
+const Title = styled.h1`
+  font-size: 48px;
+  color: ${(props) => props.theme.accentColor};
+`;
+
+const Loader = styled.span`
+  text-align: center;
+  display: block;
+`;
+
+// CoinInterface 인터페이스 정의: 코인 데이터의 구조를 정의합니다.
+interface CoinInterface {
+  id: string;
+  name: string;
+  symbol: string;
+  rank: number;
+  is_new: boolean;
+  is_active: boolean;
+  type: string;
+}
+
+// Coins 컴포넌트
+function Coins() {
+  // useState 훅으로 상태를 관리합니다. CoinInterface 배열과 로딩 상태를 관리합니다.
+  const [coins, setCoins] = useState<CoinInterface[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // useEffect 훅: 컴포넌트가 마운트될 때 API로부터 데이터를 Fetch합니다.
+  useEffect(() => {
+    (async () => {
+      const response = await fetch("https://api.coinpaprika.com/v1/coins");
+      const json = await response.json();
+      // slice 메소드를 사용하여 처음 100개의 코인 데이터만 가져옵니다.
+      setCoins(json.slice(0, 100));
+      setLoading(false);
+    })();
+  }, []);
+
+  return (
+    <Container>
+      <Header>
+        <Title>코인</Title>
+      </Header>
+      {loading ? (
+        // 로딩 상태일 때 로더를 표시합니다.
+        <Loader>Loading...</Loader>
+      ) : (
+        // 로딩이 완료되면 코인 목록을 표시합니다.
+        <CoinsList>
+          {coins.map((coin) => (
+            <Coin key={coin.id}>
+              {/* Link 컴포넌트를 사용하여 클라이언트 사이드 라우팅을 구현합니다. */}
+              <Link to={`/${coin.id}`}>{coin.name} &rarr;</Link>
+            </Coin>
+          ))}
+        </CoinsList>
+      )}
+    </Container>
+  );
+}
+export default Coins;
+```
+
+### 설명
+
+- **API 데이터 Fetch:** `fetch` 함수를 사용하여 외부 API로부터 데이터를 가져옵니다.
+- **인터페이스 설정:** `CoinInterface` 인터페이스를 사용하여 코인 데이터의 구조를 정의합니다.
+- **useState:** 상태를 관리하기 위해 사용됩니다. 여기서는 코인 데이터와 로딩 상태를 관리합니다. 명시적 타입을 설정하여 상태의 타입을 명확히 합니다.
+- **useEffect:** 컴포넌트가 마운트될 때 한 번 실행되며, API 호출을 통해 데이터를 Fetch합니다.
+- **async/await:** 비동기 작업을 동기식 코드처럼 작성할 수 있게 합니다. `async` 함수 내에서 `await`를 사용하여 비동기 작업이 완료될 때까지 기다립니다.
+- **slice 메소드:** 배열의 일부분을 잘라내어 새로운 배열을 반환합니다. 여기서는 처음 100개의 코인 데이터만 가져옵니다.
+- **로딩 상태:** 데이터를 Fetch하는 동안 로딩 상태를 관리하여 사용자에게 로딩 중임을 표시합니다.
+
+### 커밋 메시지
+
+```
+#5.3 Home part Two (09:47)
+
+feat: Fetch coin data from API and display coin list
+
+- Fetched coin data from CoinPaprika API
+- Used useState to manage coin data and loading state
+- Implemented useEffect for API call on component mount
+- Added loading indicator and styled coin list
 ```

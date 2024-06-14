@@ -1,12 +1,14 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-// Container 컴포넌트: 전체 컨테이너 스타일을 정의합니다.
+// 스타일 정의
 const Container = styled.div`
   padding: 0px 20px;
+  max-width: 480px;
+  margin: 0 auto;
 `;
 
-// Header 컴포넌트: 헤더 스타일을 정의합니다.
 const Header = styled.header`
   height: 15vh;
   display: flex;
@@ -14,10 +16,8 @@ const Header = styled.header`
   align-items: center;
 `;
 
-// CoinsList 컴포넌트: 코인 목록 스타일을 정의합니다.
 const CoinsList = styled.ul``;
 
-// Coin 컴포넌트: 각 코인 항목의 스타일을 정의합니다.
 const Coin = styled.li`
   background-color: white;
   color: ${(props) => props.theme.bgColor};
@@ -26,7 +26,7 @@ const Coin = styled.li`
   a {
     padding: 20px;
     transition: color 0.2s ease-in;
-    display: block; /* 링크를 블록 요소로 만들어 전체 영역을 클릭할 수 있게 함 */
+    display: block;
   }
   &:hover {
     a {
@@ -35,57 +35,63 @@ const Coin = styled.li`
   }
 `;
 
-// Title 컴포넌트: 제목 스타일을 정의합니다.
 const Title = styled.h1`
   font-size: 48px;
   color: ${(props) => props.theme.accentColor};
 `;
 
-// 코인 데이터 배열
-const coins = [
-  {
-    id: "btc-bitcoin",
-    name: "Bitcoin",
-    symbol: "BTC",
-    rank: 1,
-    is_new: false,
-    is_active: true,
-    type: "coin",
-  },
-  {
-    id: "eth-ethereum",
-    name: "Ethereum",
-    symbol: "ETH",
-    rank: 2,
-    is_new: false,
-    is_active: true,
-    type: "coin",
-  },
-  {
-    id: "hex-hex",
-    name: "HEX",
-    symbol: "HEX",
-    rank: 3,
-    is_new: false,
-    is_active: true,
-    type: "token",
-  },
-];
+const Loader = styled.span`
+  text-align: center;
+  display: block;
+`;
 
-// Coins 컴포넌트: 코인 목록을 렌더링합니다.
+// CoinInterface 인터페이스 정의: 코인 데이터의 구조를 정의합니다.
+interface CoinInterface {
+  id: string;
+  name: string;
+  symbol: string;
+  rank: number;
+  is_new: boolean;
+  is_active: boolean;
+  type: string;
+}
+
+// Coins 컴포넌트
 function Coins() {
+  // useState 훅으로 상태를 관리합니다. CoinInterface 배열과 로딩 상태를 관리합니다.
+  const [coins, setCoins] = useState<CoinInterface[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // useEffect 훅: 컴포넌트가 마운트될 때 API로부터 데이터를 Fetch합니다.
+  useEffect(() => {
+    (async () => {
+      const response = await fetch("https://api.coinpaprika.com/v1/coins");
+      const json = await response.json();
+      // slice 메소드를 사용하여 처음 100개의 코인 데이터만 가져옵니다.
+      setCoins(json.slice(0, 100));
+      setLoading(false);
+    })();
+  }, []);
+
   return (
     <Container>
       <Header>
         <Title>코인</Title>
       </Header>
-      <CoinsList>
-        {coins.map((coin) => (
-          <Coin key={coin.id}>
-            <Link to={`/${coin.id}`}>{coin.name} &rarr;</Link>
-          </Coin>
-        ))}
-      </CoinsList>
+      {loading ? (
+        // 로딩 상태일 때 로더를 표시합니다.
+        <Loader>Loading...</Loader>
+      ) : (
+        // 로딩이 완료되면 코인 목록을 표시합니다.
+        <CoinsList>
+          {coins.map((coin) => (
+            <Coin key={coin.id}>
+              {/* Link 컴포넌트를 사용하여 클라이언트 사이드 라우팅을 구현합니다. */}
+              <Link to={`/${coin.id}`}>{coin.name} &rarr;</Link>
+            </Coin>
+          ))}
+        </CoinsList>
+      )}
     </Container>
   );
 }
