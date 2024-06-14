@@ -1,13 +1,14 @@
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-// import { Helmet } from "react-helmet";
 import {
   Switch,
   Route,
   useLocation,
   useParams,
   useRouteMatch,
+  Link,
+  useHistory
 } from "react-router-dom";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
 import Chart from "./Chart";
@@ -32,8 +33,18 @@ const Container = styled.div`
 const Header = styled.header`
   height: 15vh;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+`;
+
+const BackButton = styled.button`
+  background-color: ${(props) => props.theme.accentColor};
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
 `;
 
 const Overview = styled.div`
@@ -144,6 +155,7 @@ interface PriceData {
 function Coin() {
   const { coinId } = useParams<RouteParams>();
   const { state } = useLocation<RouteState>();
+  const history = useHistory();
   const priceMatch = useRouteMatch("/:coinId/price");
   const chartMatch = useRouteMatch("/:coinId/chart");
   const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(
@@ -157,12 +169,9 @@ function Coin() {
   const loading = infoLoading || tickersLoading;
   return (
     <Container>
-      {/* <Helmet>
-        <title>
-          {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
-        </title>
-      </Helmet> */}
+      <BackButton onClick={() => history.push("/")}>코인 목록으로 돌아가기</BackButton>
       <Header>
+        
         <Title>
           {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
         </Title>
@@ -181,19 +190,19 @@ function Coin() {
               <span>${infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
-              <span>Price:</span>
-              <span>${tickersData?.quotes.USD.price.toFixed(3)}</span>
+              <span>Open Source:</span>
+              <span>{infoData?.open_source ? "Yes" : "No"}</span>
             </OverviewItem>
           </Overview>
           <Description>{infoData?.description}</Description>
           <Overview>
             <OverviewItem>
               <span>Total Suply:</span>
-              <span>{tickersData?.total_supply}</span>
+              <span>{tickersData?.quotes.USD.total_supply}</span>
             </OverviewItem>
             <OverviewItem>
               <span>Max Supply:</span>
-              <span>{tickersData?.max_supply}</span>
+              <span>{tickersData?.quotes.USD.max_supply}</span>
             </OverviewItem>
           </Overview>
 
@@ -208,7 +217,7 @@ function Coin() {
 
           <Switch>
             <Route path={`/:coinId/price`}>
-              <Price />
+              <Price coinId={coinId} />
             </Route>
             <Route path={`/:coinId/chart`}>
               <Chart coinId={coinId} />
