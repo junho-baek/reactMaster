@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router";
 import styled from "styled-components";
 
@@ -41,6 +41,24 @@ function Coin() {
   const [loading, setLoading] = useState(true);
   const { coinId } = useParams<RouteParams>();
   const { state } = useLocation<RouteState>();
+  const [info, setInfo] = useState({});
+  const [priceInfo, setPriceInfo] = useState({});
+
+  // useEffect 훅: 컴포넌트가 마운트될 때 API로부터 데이터를 Fetch합니다.
+  useEffect(() => {
+    (async () => {
+      const infoData = await (
+        await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
+      ).json();
+      const priceData = await (
+        await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
+      ).json();
+      setInfo(infoData);
+      setPriceInfo(priceData);
+      setLoading(false); // 데이터 로드 완료 후 로딩 상태 해제
+    })();
+  }, [coinId]);
+
   return (
     <Container>
       <Header>

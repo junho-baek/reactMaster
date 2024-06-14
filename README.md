@@ -1854,3 +1854,105 @@ feat: Fetch coin data from API and display coin list with images
 - Implemented useEffect for API call on component mount
 - Added loading indicator and styled coin list
 - Displayed coin images and passed state to detail page using Link component
+
+
+## #5.5 Coin Data (07:47)
+
+### 주요 내용:
+- **API 데이터 Fetch:** 코인 정보를 외부 API에서 가져오는 방법 연습
+- **리액트 쿼리:** 비동기 데이터 캡슐화 및 관리
+- **비동기 처리:** 비동기 작업을 효율적으로 처리
+
+### 코드 예시
+
+src/routes/Coin.tsx
+
+```typescript
+import { useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router";
+import styled from "styled-components";
+
+// 스타일 정의
+const Title = styled.h1`
+  font-size: 48px;
+  color: ${(props) => props.theme.accentColor};
+`;
+
+const Loader = styled.span`
+  text-align: center;
+  display: block;
+`;
+
+const Container = styled.div`
+  padding: 0px 20px;
+  max-width: 480px;
+  margin: 0 auto;
+`;
+
+const Header = styled.header`
+  height: 15vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+// RouteParams 인터페이스 정의: URL 파라미터의 타입을 정의합니다.
+interface RouteParams {
+  coinId: string;
+}
+
+// RouteState 인터페이스 정의: 상태의 타입을 정의합니다.
+interface RouteState {
+  name: string;
+}
+
+// Coin 컴포넌트
+function Coin() {
+  const [loading, setLoading] = useState(true);
+  const { coinId } = useParams<RouteParams>();
+  const { state } = useLocation<RouteState>();
+  const [info, setInfo] = useState({});
+  const [priceInfo, setPriceInfo] = useState({});
+
+  // useEffect 훅: 컴포넌트가 마운트될 때 API로부터 데이터를 Fetch합니다.
+  useEffect(() => {
+    (async () => {
+      const infoData = await (
+        await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
+      ).json();
+      const priceData = await (
+        await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
+      ).json();
+      setInfo(infoData);
+      setPriceInfo(priceData);
+      setLoading(false); // 데이터 로드 완료 후 로딩 상태 해제
+    })();
+  }, [coinId]);
+
+  return (
+    <Container>
+      <Header>
+        <Title>{state?.name || "Loading..."}</Title>
+      </Header>
+      {loading ? <Loader>Loading...</Loader> : null}
+    </Container>
+  );
+}
+export default Coin;
+```
+
+### 설명
+
+- **API 데이터 Fetch:** `fetch` 함수를 사용하여 외부 API로부터 코인 정보를 가져옵니다.
+- **리액트 쿼리:** 비동기 데이터를 캡슐화하여 컴포넌트의 재사용성을 높이고 데이터 fetching 로직을 분리합니다.
+- **비동기 처리:** `async/await`를 사용하여 비동기 작업을 동기식 코드처럼 작성할 수 있게 합니다. `async` 함수 내에서 `await`를 사용하여 비동기 작업이 완료될 때까지 기다립니다.
+- **로딩 상태:** 데이터를 Fetch하는 동안 로딩 상태를 관리하여 사용자에게 로딩 중임을 표시합니다.
+
+### 커밋 메시지
+
+feat: Fetch coin data and display in Coin component
+
+- Fetched coin data from CoinPaprika API
+- Used useState to manage coin info and price info state
+- Implemented useEffect for API call on component mount
+- Added loading indicator and styled coin detail page
