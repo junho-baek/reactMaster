@@ -81,7 +81,7 @@ Add a <Suspense fallback=...> component higher in the tree to provide a loading 
   width: 35px;
   height: 35px;
   margin-right: 10px;
-`;function ow(){const{isLoading:t,data:r}=ea("allCoins",p0);return le.jsxs(ew,{children:[le.jsx(lc,{children:le.jsx("title",{children:"코인"})}),le.jsx(tw,{children:le.jsx(nw,{children:"코인"})}),t?le.jsx(aw,{children:"Loading..."}):le.jsx(iw,{children:r==null?void 0:r.slice(0,100).map(s=>le.jsx(rw,{children:le.jsxs(Is,{to:{pathname:`/reactMaster/${s.id}`,state:{name:s.name}},children:[le.jsx(sw,{src:`https://static.coinpaprika.com/coin/${s.id}/logo.png`}),s.name," →"]})},s.id))})]})}var Bg={},cc={exports:{}};/*!
+`;function ow(){const{isLoading:t,data:r}=ea(["allCoins"],p0);return le.jsxs(ew,{children:[le.jsx(lc,{children:le.jsx("title",{children:"코인"})}),le.jsx(tw,{children:le.jsx(nw,{children:"코인"})}),t?le.jsx(aw,{children:"Loading..."}):le.jsx(iw,{children:r==null?void 0:r.slice(0,100).map(s=>le.jsx(rw,{children:le.jsxs(Is,{to:{pathname:`/reactMaster/${s.id}`,state:{name:s.name}},children:[le.jsx(sw,{src:`https://static.coinpaprika.com/coin/${s.id}/logo.png`}),s.name," →"]})},s.id))})]})}var Bg={},cc={exports:{}};/*!
  * ApexCharts v3.49.1
  * (c) 2018-2024 ApexCharts
  * Released under the MIT License.
